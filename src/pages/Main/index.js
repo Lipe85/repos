@@ -16,7 +16,7 @@ export default function Main(){
     //didMount -> buscar
     useEffect(() => {
         const repoStorage = localStorage.getItem('repos');
-
+   
         if(repoStorage){
             setRepositorios(JSON.parse(repoStorage));
         }
