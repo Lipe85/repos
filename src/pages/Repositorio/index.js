@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import api from '../../services/api';
 import { FaArrowLeft } from 'react-icons/fa';
 
-import { Container, Owner, Loading, BackButton} from './styles';
+import { Container, Owner, Loading, BackButton, IssuesList} from './styles';
 
 
 export default function Repositorio(){
@@ -22,13 +22,16 @@ export default function Repositorio(){
             const [repositorioData, issuesData] =  await Promise.all([
                 api.get(`/repos/${nomeRepo}`),
                 api.get(`/repos/${nomeRepo}/issues`, {
-                    state: 'open',
-                    per_page: 5
+                    params: {
+                        state: 'open',
+                        per_page: 5
+                    }
                 })
             ])
 
             setRepo(repositorioData.data);
             setIssues(issuesData.data);
+            console.log(issuesData.data);
             setLoading(false);
         }
 
@@ -56,6 +59,30 @@ export default function Repositorio(){
                 <h1>{ repo.name }</h1>
                 <p>{ repo.description }</p>
             </Owner>
+
+            <IssuesList>
+                { issues.map(issue => (
+                    <li key={String(issue.id)}>
+                        <img src={issue.user.avatar_url} alt={issue.user.login} />
+                        
+                        <div>
+                            <strong>
+                                <a href={issue.html_url}>{issue.title}</a>
+
+                                { issue.labels.map(label => (
+                                    <span key={String(label.id)}>{label.name}</span>
+                                )) }
+
+                            </strong>
+
+                            <p>{issue.user.login}</p>
+
+                        </div>
+
+                    </li>
+                )) }
+            </IssuesList>
+
         </Container>
     );
 }
